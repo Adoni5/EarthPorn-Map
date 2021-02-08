@@ -1,8 +1,7 @@
-import re
-import pprint
 import os
 import logging.config
 import csv
+import json
 
 import praw
 import yaml
@@ -47,11 +46,17 @@ if not collection_parsed.find_one():
     )
 
     subreddit = reddit.subreddit("earthporn")
-    posts = [submission.title for submission in tqdm(subreddit.top(limit=1000), desc="Processing posts", total=1000)]
+    posts = [(submission.title, submission.preview["images"][0]["source"]["url"]) for submission in tqdm(subreddit.top(limit=1000), desc="Processing posts", total=1000)]
     counts = count_countries_and_states(posts, countries, state_dict)
+    with open("files/country_data_counts.json", "w") as fh:
+        json.dump(counts, fh)
     collection_parsed.insert_many([counts])
     logger.info("finished")
 else:
-    logger.info("Data already parsed and stored in database ")
+    data = collection_parsed.find_one()
+    data.pop("_id")
+    with open("files/country_data_counts.json", "w") as fh:
+        json.dump(data, fh)
+    logger.info("Data already parsed and stored in database")
 
 
