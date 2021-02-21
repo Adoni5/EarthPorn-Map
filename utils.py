@@ -24,7 +24,8 @@ def count_countries_and_states(posts, countries, states):
         country: (
             int(df["lower_title"].str.contains(country.lower()).sum()),
             df[df["lower_title"].str.contains(country.lower())][1].values.tolist(),
-            df[df["lower_title"].str.contains(country.lower())][0].values.tolist()
+            df[df["lower_title"].str.contains(country.lower())][0].values.tolist(),
+            df[df["lower_title"].str.contains(country.lower())][2].values.tolist()
         )
         for country in countries
     }
@@ -40,6 +41,9 @@ def count_countries_and_states(posts, countries, states):
             ].values.tolist(),
             df[df["lower_title"].str.contains(f"{state_name.lower()}|\\W{state_code.lower()}\\W")][
                 0
+            ].values.tolist(),
+            df[df["lower_title"].str.contains(f"{state_name.lower()}|\\W{state_code.lower()}\\W")][
+                2
             ].values.tolist()
         )
         for (state_code, state_name) in states.items()
